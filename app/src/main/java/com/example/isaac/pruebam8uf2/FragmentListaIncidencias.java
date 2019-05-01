@@ -4,9 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,6 +32,10 @@ public class FragmentListaIncidencias extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    RecyclerView recyclerView;
+    ArrayList<ImageUploadInfo> mylist;
+
 
     public FragmentListaIncidencias() {
         // Required empty public constructor
@@ -64,7 +72,27 @@ public class FragmentListaIncidencias extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista_incidencias, container, false);
+        View view = inflater.inflate(R.layout.fragment_lista_incidencias, container, false);
+
+        mylist = new ArrayList<>();
+        recyclerView = view.findViewById(R.id.recyclerId);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        llenarLista();
+
+        recyclerAdapter adapter = new recyclerAdapter(mylist);
+        recyclerView.setAdapter(adapter);
+
+
+        return view;
+    }
+
+    private void llenarLista() {
+        mylist.add(new ImageUploadInfo("ImagenSubida1","001",false));
+        mylist.add(new ImageUploadInfo("ImagenSubida2","002",true));
+        mylist.add(new ImageUploadInfo("ImagenSubida3","003",false));
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
