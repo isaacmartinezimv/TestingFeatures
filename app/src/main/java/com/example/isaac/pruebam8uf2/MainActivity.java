@@ -1,6 +1,8 @@
 package com.example.isaac.pruebam8uf2;
 
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity  implements
 FragmentReportarIncidencia.OnFragmentInteractionListener,
@@ -21,6 +25,8 @@ FragmentListaIncidencias.OnFragmentInteractionListener {
     Toolbar toolbar; //Declaramos la toolBar
     FragmentReportarIncidencia reportarIncidencia;
     FragmentListaIncidencias listaIncidencias;
+    MediaPlayer audioPlayer;
+    boolean musicState = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,19 @@ FragmentListaIncidencias.OnFragmentInteractionListener {
 
         //Iniciamos la app con el fragment que elijamos
         getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragment, reportarIncidencia).commit();
+
+        audioPlayer = new MediaPlayer(); //Instanciamos un nuevo MediaPlayer
+        audioPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        String audioURL = "http://docs.google.com/uc?export=download&id=1SDCUlrEoxzcU2pehSMljEyxyAJkc3-mw";
+
+        try {
+            audioPlayer.setDataSource(audioURL);
+            audioPlayer.prepare();
+            audioPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -60,7 +79,17 @@ FragmentListaIncidencias.OnFragmentInteractionListener {
 
         switch (item.getItemId()){
             case R.id.musicItem:
-                Toast.makeText(this, "play/pause musica", Toast.LENGTH_SHORT).show();
+                if (audioPlayer.isPlaying()) {
+                    Toast.makeText(this, "Music Paused", Toast.LENGTH_SHORT).show();
+                    audioPlayer.pause();
+                    musicState = false;
+                    toolbar.getMenu().getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                } else {
+                    Toast.makeText(this, "Music Playing", Toast.LENGTH_SHORT).show();
+                    audioPlayer.start();
+                    musicState = true;
+                    toolbar.getMenu().getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_pause_black_24dp));
+                }
                 break;
             case R.id.item1:
                 transaction.replace(R.id.contenedorFragment, reportarIncidencia);
@@ -74,5 +103,15 @@ FragmentListaIncidencias.OnFragmentInteractionListener {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        audioPlayer.pause();
+    }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        audioPlayer.start();
+    }
 }
