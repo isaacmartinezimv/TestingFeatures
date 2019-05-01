@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -56,6 +58,12 @@ public class FragmentReportarIncidencia extends Fragment {
     //Declaramos las variables necesarias para Firebase
     FirebaseStorage storage;
     StorageReference storageReference;
+
+    //Firebase Database
+    FirebaseDatabase database;
+    DatabaseReference databaseReference;
+    String databasePath = "images";
+
     private Uri filePath;
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -113,9 +121,11 @@ public class FragmentReportarIncidencia extends Fragment {
 
         //generamos una instancia de FirebaseStorage y la asociamos a la variable declarada anteriormente
         storage = FirebaseStorage.getInstance();
-
-        //generamos su referencia y la asignamos
         storageReference = storage.getReference();
+
+        //Firebase database
+        database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference(databasePath);
 
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,10 +160,20 @@ public class FragmentReportarIncidencia extends Fragment {
             progressDialog.show();
 
             StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            final String fileName = ref.toString();
+
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ImageUploadInfo imageUploadInfo = new ImageUploadInfo(fileName, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), false);
+
+                    // Getting image upload ID.
+                    String ImageUploadId = databaseReference.push().getKey();
+
+                    // Adding image upload id s child element into databaseReference.
+                    databaseReference.child(ImageUploadId).setValue(imageUploadInfo);
+
                     progressDialog.dismiss();
                     Toast.makeText(getActivity(), "Image Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                 }

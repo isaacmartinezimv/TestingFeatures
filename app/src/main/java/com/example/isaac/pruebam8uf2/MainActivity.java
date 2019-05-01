@@ -114,4 +114,10 @@ FragmentListaIncidencias.OnFragmentInteractionListener {
         super.onPostResume();
         audioPlayer.start();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        audioPlayer.pause();
+    }
 }
