@@ -131,6 +131,8 @@ public class FragmentReportarIncidencia extends Fragment {
             }
         });
 
+        uploadPicture.setAlpha(0);
+
         return view;
     }
 
@@ -149,7 +151,7 @@ public class FragmentReportarIncidencia extends Fragment {
 
             StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                
+
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();
@@ -180,6 +182,11 @@ public class FragmentReportarIncidencia extends Fragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
+
+                //boton upload visible
+                uploadPicture.animate().alpha(1.0f).setDuration(2000).start();
+
+                //asd
             } catch (IOException e) {
                 e.printStackTrace();
             }
