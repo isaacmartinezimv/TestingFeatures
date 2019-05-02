@@ -49,9 +49,21 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="25pt"
+            android:layout_height="10pt"
             />
 
+        <EditText
+            android:id="@+id/userPictureName"
+            android:layout_width="220dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:textSize="12dp"
+            android:background="@android:color/white"
+            android:hint="Nombre incidencia"
+            />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
         <Button
             android:id="@+id/uploadImageButton"
             android:layout_width="180dp"

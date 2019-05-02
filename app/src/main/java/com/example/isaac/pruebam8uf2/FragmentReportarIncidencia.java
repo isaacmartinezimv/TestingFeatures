@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class FragmentReportarIncidencia extends Fragment {
     ImageButton takePicture;
     Button uploadPicture;
     ImageView imageView;
+    EditText editText;
 
     private String [] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE"};
 
@@ -118,6 +120,7 @@ public class FragmentReportarIncidencia extends Fragment {
         takePicture = view.findViewById(R.id.takePictureButton);
         uploadPicture = view.findViewById(R.id.uploadImageButton);
         imageView = view.findViewById(R.id.imageView);
+        editText = view.findViewById(R.id.userPictureName);
 
         //generamos una instancia de FirebaseStorage y la asociamos a la variable declarada anteriormente
         storage = FirebaseStorage.getInstance();
@@ -137,7 +140,7 @@ public class FragmentReportarIncidencia extends Fragment {
         uploadPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImage();
+                uploadImage(editText);
             }
         });
 
@@ -153,14 +156,14 @@ public class FragmentReportarIncidencia extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    private void uploadImage() {
+    private void uploadImage(EditText editText) {
         if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
             StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
-            final String fileName = ref.toString();
+            final String fileName = editText.getText().toString();
 
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
